@@ -24,7 +24,8 @@ public class Tanks {
     private final int leftOffset;
     private final int topOffset;
 
-    private Rect tankRect;
+    private Rect greenTankRect;
+    private Rect redTankRect;
 
     private Canvas canvas = null;
 
@@ -41,10 +42,19 @@ public class Tanks {
         this.screenHeight = screenHeight;
         this.greenTankBitmaps = getGreenTankBitmaps();
         this.redTankBitmaps = getRedTankBitmaps();
+        this.greenTankRect = getGreenStartRect();
+        this.redTankRect = getRedStartRect();
 
+    }
+
+    private Rect getGreenStartRect() {
         Start start = new Start(leftOffset + screenWidth - (4 * brickWidth), topOffset + (screenHeight - brickHeight));
-        this.tankRect = new TankRect(start, tankWidth, tankHeight).getRect();
+        return new TankRect(start, tankWidth, tankHeight).getRect();
+    }
 
+    private Rect getRedStartRect() {
+        Start start = new Start(leftOffset + screenWidth - (4 * brickWidth), topOffset);
+        return new TankRect(start, tankWidth, tankHeight).getRect();
     }
 
     public void setCanvas(Canvas canvas) {
@@ -52,7 +62,8 @@ public class Tanks {
     }
 
     public void draw() {
-        canvas.drawBitmap(greenTankBitmaps.UP, null, tankRect, null);
+        canvas.drawBitmap(greenTankBitmaps.UP, null, greenTankRect, null);
+        canvas.drawBitmap(redTankBitmaps.DOWN, null, redTankRect, null);
     }
 
     private Bitmap getGreenTankRightBitmap() {

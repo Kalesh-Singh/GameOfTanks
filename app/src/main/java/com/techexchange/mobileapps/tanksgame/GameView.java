@@ -8,7 +8,7 @@ public class GameView extends View {
 
     private final Context context;
     private Bricks bricks = null;
-    private Tank tank = null;
+    private Tanks tanks = null;
 
     public GameView(Context context) {
         super(context);
@@ -19,11 +19,11 @@ public class GameView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (this.bricks != null && this.tank != null) {
+        if (this.bricks != null && this.tanks != null) {
             bricks.setCanvas(canvas);
             bricks.draw();
-            tank.setCanvas(canvas);
-            tank.draw();
+            tanks.setCanvas(canvas);
+            tanks.draw();
         }
 
         invalidate();       // Forces a redraw.
@@ -34,6 +34,6 @@ public class GameView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
 
         bricks = new Bricks(this.context, w, h);
-        tank = new Tank(context, bricks.getBrickRects(), bricks.getBrickWidth(), bricks.getBrickHeight(), w, h);
+        tanks = new Tanks(context, bricks.getBrickRects(), bricks.getBrickWidth(), bricks.getBrickHeight(), w, h);
     }
 }
