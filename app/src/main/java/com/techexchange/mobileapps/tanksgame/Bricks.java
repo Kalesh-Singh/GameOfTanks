@@ -24,7 +24,8 @@ public class Bricks {
         this.canvas = canvas;
         this.brickBitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.brick);
         this.brickRects = new ArrayList<>();
-        createColumn(new Start(100, 0), 5);
+        Start start = createColumn(new Start(150, 0), 3);
+        start = createRow(start, 3);
         // TODO: Create more brick rectangles.
     }
 
@@ -35,7 +36,7 @@ public class Bricks {
     }
 
     /**
-     * Add the column Rects to brickRects
+     * Adds the column Rects to brickRects.
      * Returns the start for next col or row.
      * */
     private Start createColumn(Start start, int numBricks) {
@@ -43,6 +44,20 @@ public class Bricks {
         for (int i = 0; i < numBricks; ++i) {
             this.brickRects.add(new BrickRect(rectStart, WIDTH, HEIGHT).getRect());
             rectStart.top += HEIGHT;
+        }
+        return rectStart;
+    }
+
+    /**
+     * Adds the row Rects to brickRects.
+     * Returns the start for the next col or row.
+     */
+
+    private Start createRow(Start start, int numBricks) {
+        Start rectStart = start;
+        for (int i = 0; i < numBricks; ++i) {
+            this.brickRects.add(new BrickRect(rectStart, WIDTH, HEIGHT).getRect());
+            rectStart.left += WIDTH;
         }
         return rectStart;
     }
