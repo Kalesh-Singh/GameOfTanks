@@ -34,6 +34,18 @@ public class Bricks {
         createMaze();
     }
 
+    public List<Rect> getBrickRects() {
+        return this.brickRects;
+    }
+
+    public int getBrickWidth() {
+        return this.brickWidth;
+    }
+
+    public int getBrickHeight() {
+        return this.brickHeight;
+    }
+
     public void setCanvas(Canvas canvas) {
         this.canvas = canvas;
     }
@@ -47,10 +59,9 @@ public class Bricks {
     private void createMaze() {
         Start start = createColumn(new Start(150, 0), 3);
         createRow(start, 3);
-
         createRow(new Start(screenWidth - (3 * brickWidth), 0), 2);
-
-        start = createRow(new Start(screenWidth - (6 * brickWidth), screenHeight - 3 * brickHeight), 2);
+        start = createRow(new Start(screenWidth - (6 * brickWidth),
+                screenHeight - 3 * brickHeight), 2);
         start.top -= brickHeight * 2;
         start = createColumn(start, 3);
         start.left += brickWidth;
@@ -73,8 +84,7 @@ public class Bricks {
     /**
      * Adds the row Rects to brickRects.
      * Returns the start for the next col or row.
-     */
-
+     * */
     private Start createRow(Start start, int numBricks) {
         for (int i = 0; i < numBricks; ++i) {
             this.brickRects.add(new BrickRect(start, brickWidth, brickHeight).getRect());
