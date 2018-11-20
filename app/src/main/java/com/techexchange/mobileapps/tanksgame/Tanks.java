@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import java.util.List;
 
 public class Tanks {
+    static final String TAG = "Tanks";
 
     private final Context context;
     private final List<Rect> brickRects;
@@ -26,6 +27,8 @@ public class Tanks {
 
     private Rect greenTankRect;
     private Rect redTankRect;
+    private Bitmap greenTank;
+    private Bitmap redTank;
 
     private Canvas canvas = null;
 
@@ -42,6 +45,8 @@ public class Tanks {
         this.screenHeight = screenHeight;
         this.greenTankBitmaps = getGreenTankBitmaps();
         this.redTankBitmaps = getRedTankBitmaps();
+        this.greenTank = greenTankBitmaps.UP;
+        this.redTank = redTankBitmaps.DOWN;
         this.greenTankRect = getGreenStartRect();
         this.redTankRect = getRedStartRect();
 
@@ -62,8 +67,8 @@ public class Tanks {
     }
 
     public void draw() {
-        canvas.drawBitmap(greenTankBitmaps.UP, null, greenTankRect, null);
-        canvas.drawBitmap(redTankBitmaps.DOWN, null, redTankRect, null);
+        canvas.drawBitmap(greenTank, null, greenTankRect, null);
+        canvas.drawBitmap(redTank, null, redTankRect, null);
     }
 
     private Bitmap getGreenTankRightBitmap() {
@@ -102,6 +107,28 @@ public class Tanks {
         greenTankBitmaps.LEFT = rotateBitmapClockwise90Degrees(greenTankBitmaps.DOWN);
         greenTankBitmaps.UP = rotateBitmapClockwise90Degrees(greenTankBitmaps.LEFT);
         return greenTankBitmaps;
+    }
+
+    public void handleGreenUp() {
+        greenTank = greenTankBitmaps.UP;
+//        greenTankRect.top -= brickHeight;
+    }
+
+    public void handleGreenDown() {
+        greenTank = greenTankBitmaps.DOWN;
+//        greenTankRect.top -= brickHeight;
+    }
+
+    public void handleGreenRight() {
+        // TODO:
+        greenTank = greenTankBitmaps.RIGHT;
+//        greenTankRect.left += brickWidth;
+    }
+
+    public void handleGreenLeft() {
+        // TODO:
+        greenTank = greenTankBitmaps.LEFT;
+//        greenTankRect.left -= brickWidth;
     }
 
 }
