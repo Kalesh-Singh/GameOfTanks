@@ -49,8 +49,8 @@ public class Bricks {
         createRow(new Start(screenWidth - (3 * WIDTH), 0), 2);
 
         start = createRow(new Start(screenWidth - (6 * WIDTH), screenHeight - 3 * HEIGHT), 2);
-        start.top -= 2 * HEIGHT;
-        start = createColumn(start, 3);
+        start.top -= HEIGHT;
+        start = createColumn(start, 2);
         start.left += WIDTH;
         start.top -= HEIGHT;
         createColumn(start, 3);
