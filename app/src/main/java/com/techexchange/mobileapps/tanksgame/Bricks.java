@@ -11,22 +11,29 @@ import java.util.List;
 
 public class Bricks {
 
-    private static final int WIDTH = 150;
-    private static final int HEIGHT = 150;
+    private static final int WIDTH = 200;
+    private static final int HEIGHT = 200;
 
     private final Context context;
-    private final Canvas canvas;
-    private final Bitmap brickBitmap;
-    private List<Rect> brickRects;
+    private Canvas canvas = null;
 
-    public Bricks(Context context, Canvas canvas) {
+    private final int screenWidth;
+    private final int screenHeight;
+
+    private final Bitmap brickBitmap;
+    private final List<Rect> brickRects;
+
+    public Bricks(Context context, int screenWidth, int screenHeight) {
         this.context = context;
-        this.canvas = canvas;
+        this.screenWidth = screenWidth;
+        this.screenHeight = screenHeight;
         this.brickBitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.brick);
         this.brickRects = new ArrayList<>();
-        Start start = createColumn(new Start(150, 0), 3);
-        start = createRow(start, 3);
-        // TODO: Create more brick rectangles.
+        createMaze();
+    }
+
+    public void setCanvas(Canvas canvas) {
+        this.canvas = canvas;
     }
 
     public void draw() {
@@ -35,17 +42,30 @@ public class Bricks {
         }
     }
 
+    private void createMaze() {
+        Start start = createColumn(new Start(150, 0), 3);
+        createRow(start, 3);
+
+        createRow(new Start(screenWidth - (3 * WIDTH), 0), 2);
+
+        start = createRow(new Start(screenWidth - (6 * WIDTH), screenHeight - 3 * HEIGHT), 2);
+        start.top -= 2 * HEIGHT;
+        start = createColumn(start, 3);
+        start.left += WIDTH;
+        start.top -= HEIGHT;
+        createColumn(start, 3);
+    }
+
     /**
      * Adds the column Rects to brickRects.
      * Returns the start for next col or row.
      * */
     private Start createColumn(Start start, int numBricks) {
-        Start rectStart = start;
         for (int i = 0; i < numBricks; ++i) {
-            this.brickRects.add(new BrickRect(rectStart, WIDTH, HEIGHT).getRect());
-            rectStart.top += HEIGHT;
+            this.brickRects.add(new BrickRect(start, WIDTH, HEIGHT).getRect());
+            start.top += HEIGHT;
         }
-        return rectStart;
+        return start;
     }
 
     /**
@@ -54,12 +74,11 @@ public class Bricks {
      */
 
     private Start createRow(Start start, int numBricks) {
-        Start rectStart = start;
         for (int i = 0; i < numBricks; ++i) {
-            this.brickRects.add(new BrickRect(rectStart, WIDTH, HEIGHT).getRect());
-            rectStart.left += WIDTH;
+            this.brickRects.add(new BrickRect(start, WIDTH, HEIGHT).getRect());
+            start.left += WIDTH;
         }
-        return rectStart;
+        return start;
     }
 
 }
