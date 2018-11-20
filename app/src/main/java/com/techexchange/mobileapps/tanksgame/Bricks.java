@@ -11,27 +11,40 @@ import java.util.List;
 
 public class Bricks {
 
-    private static final int WIDTH = 100;
-    private static final int HEIGHT = 100;
+    private static final int WIDTH = 150;
+    private static final int HEIGHT = 150;
 
     private final Context context;
     private final Canvas canvas;
     private final Bitmap brickBitmap;
-    private List<Rect> brickRectangles;
+    private List<Rect> brickRects;
 
     public Bricks(Context context, Canvas canvas) {
         this.context = context;
         this.canvas = canvas;
         this.brickBitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.brick);
-        this.brickRectangles = new ArrayList<>();
-        this.brickRectangles.add(new BrickRect(new Start(0, 0), WIDTH, HEIGHT).getRect());
+        this.brickRects = new ArrayList<>();
+        createColumn(new Start(100, 0), 5);
         // TODO: Create more brick rectangles.
     }
 
     public void draw() {
-        for (Rect rect : brickRectangles) {
+        for (Rect rect : brickRects) {
             canvas.drawBitmap(brickBitmap, null, rect, null);
         }
+    }
+
+    /**
+     * Add the column Rects to brickRects
+     * Returns the start for next col or row.
+     * */
+    private Start createColumn(Start start, int numBricks) {
+        Start rectStart = start;
+        for (int i = 0; i < numBricks; ++i) {
+            this.brickRects.add(new BrickRect(rectStart, WIDTH, HEIGHT).getRect());
+            rectStart.top += HEIGHT;
+        }
+        return rectStart;
     }
 
 }
