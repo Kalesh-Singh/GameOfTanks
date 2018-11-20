@@ -1,4 +1,3 @@
-/*
 package com.techexchange.mobileapps.tanksgame;
 
 import android.content.Context;
@@ -11,6 +10,7 @@ import android.graphics.Rect;
 import java.util.List;
 
 public class Tanks {
+
     private final Context context;
     private final List<Rect> brickRects;
     private final int brickWidth;
@@ -19,7 +19,8 @@ public class Tanks {
     private final int tankHeight;
     private final int screenWidth;
     private final int screenHeight;
-    private final Bitmap tankBitmap;
+    private final TankBitmap greenTankBitmaps;
+    private final TankBitmap redTankBitmaps;
     private final int leftOffset;
     private final int topOffset;
 
@@ -38,7 +39,8 @@ public class Tanks {
         this.topOffset = (brickHeight - tankHeight) / 2;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
-        this.tankBitmap = getGreenTankBitmaps().DOWN;
+        this.greenTankBitmaps = getGreenTankBitmaps();
+        this.redTankBitmaps = getRedTankBitmaps();
 
         Start start = new Start(leftOffset + screenWidth - (4 * brickWidth), topOffset + (screenHeight - brickHeight));
         this.tankRect = new TankRect(start, tankWidth, tankHeight).getRect();
@@ -50,7 +52,7 @@ public class Tanks {
     }
 
     public void draw() {
-        canvas.drawBitmap(tankBitmap, null, tankRect, null);
+        canvas.drawBitmap(greenTankBitmaps.UP, null, tankRect, null);
     }
 
     private Bitmap getGreenTankRightBitmap() {
@@ -90,5 +92,5 @@ public class Tanks {
         greenTankBitmaps.UP = rotateBitmapClockwise90Degrees(greenTankBitmaps.LEFT);
         return greenTankBitmaps;
     }
+
 }
-*/
