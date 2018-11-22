@@ -91,28 +91,29 @@ public class Tanks {
         return greenTankRect.top != greenDestTop || greenTankRect.left != greenDestLeft;
     }
 
-    private boolean greenInUpwardMotion() {
+    public boolean greenInUpwardMotion() {
         return (greenDirection == Direction.UP)
                 && (greenTankRect.top != greenDestTop);
     }
 
-    private boolean greenInDownwardMotion() {
+    public boolean greenInDownwardMotion() {
         return (greenDirection == Direction.DOWN)
                 && (greenTankRect.top != greenDestTop);
     }
 
-    private boolean greenInLeftwardMotion() {
+    public boolean greenInLeftwardMotion() {
         return (greenDirection == Direction.LEFT)
                 && (greenTankRect.left != greenDestLeft);
     }
 
-    private boolean greenInRightwardMotion() {
+    public boolean greenInRightwardMotion() {
         return (greenDirection == Direction.RIGHT)
                 && (greenTankRect.left != greenDestLeft);
     }
 
     private Rect getGreenStartRect() {
-        Start start = new Start(leftOffset + screenWidth - (4 * brickWidth), topOffset + (screenHeight - brickHeight));
+        Start start = new Start(leftOffset + screenWidth - (4 * brickWidth),
+                topOffset + (screenHeight - brickHeight));
         return new TankRect(start, tankWidth, tankHeight).getRect();
     }
 
@@ -131,14 +132,16 @@ public class Tanks {
     }
 
     private Bitmap getGreenTankRightBitmap() {
-        Bitmap spriteSheet = BitmapFactory.decodeResource(context.getResources(), R.drawable.multicolortanks);
+        Bitmap spriteSheet = BitmapFactory.decodeResource(context.getResources(),
+                R.drawable.multicolortanks);
         int tileWidth = spriteSheet.getWidth() / 8;
         int tileHeight = spriteSheet.getHeight() / 8;
         return Bitmap.createBitmap(spriteSheet, 0, 0, tileWidth, tileHeight);
     }
 
     private Bitmap getRedTankRightBitmap() {
-        Bitmap spriteSheet = BitmapFactory.decodeResource(context.getResources(), R.drawable.multicolortanks);
+        Bitmap spriteSheet = BitmapFactory.decodeResource(context.getResources(),
+                R.drawable.multicolortanks);
         int tileWidth = spriteSheet.getWidth() / 8;
         int tileHeight = spriteSheet.getHeight() / 8;
         return Bitmap.createBitmap(spriteSheet, 0, tileHeight, tileWidth, tileHeight);
@@ -147,7 +150,8 @@ public class Tanks {
     private Bitmap rotateBitmapClockwise90Degrees(Bitmap bitmap) {
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                bitmap.getHeight(), matrix, true);
     }
 
     private TankBitmap getRedTankBitmaps() {
@@ -171,6 +175,7 @@ public class Tanks {
     public void handleGreenUp() {
         greenTank = greenTankBitmaps.UP;
         greenDirection = Direction.UP;
+        // TODO: Check for collision at destination before updating it.
         greenDestTop -= brickHeight;
         moveGreenUp();
     }
@@ -178,13 +183,15 @@ public class Tanks {
     public void handleGreenDown() {
         greenTank = greenTankBitmaps.DOWN;
         greenDirection = Direction.DOWN;
+        // TODO: Check for collision at destination before updating it.
         greenDestTop += brickHeight;
         moveGreenDown();
     }
 
     public void handleGreenRight() {
         greenTank = greenTankBitmaps.RIGHT;
-        greenDirection = Direction.UP;
+        greenDirection = Direction.RIGHT;
+        // TODO: Check for collision at destination before updating it.
         greenDestLeft += brickWidth;
         moveGreenRight();
     }
@@ -192,6 +199,7 @@ public class Tanks {
     public void handleGreenLeft() {
         greenTank = greenTankBitmaps.LEFT;
         greenDirection = Direction.LEFT;
+        // TODO: Check for collision at destination before updating it.
         greenDestLeft -= brickWidth;
         moveGreenLeft();
     }
@@ -217,8 +225,8 @@ public class Tanks {
     }
 
     private void moveGreenRight() {
-        greenTankRect.left += ySpeed * TIME_STEP;
-        greenTankRect.right += ySpeed * TIME_STEP;
+        greenTankRect.left += xSpeed * TIME_STEP;
+        greenTankRect.right += xSpeed * TIME_STEP;
         if (greenTankRect.left > greenDestLeft) {
             int depth = greenTankRect.left - greenDestLeft;
             greenTankRect.left -= depth;
@@ -227,13 +235,12 @@ public class Tanks {
     }
 
     private void moveGreenLeft() {
-        greenTankRect.left -= ySpeed * TIME_STEP;
-        greenTankRect.right -= ySpeed * TIME_STEP;
+        greenTankRect.left -= xSpeed * TIME_STEP;
+        greenTankRect.right -= xSpeed * TIME_STEP;
         if (greenTankRect.left < greenDestLeft) {
             int depth = greenDestLeft - greenTankRect.left;
             greenTankRect.left += depth;
             greenTankRect.right += depth;
         }
     }
-
 }

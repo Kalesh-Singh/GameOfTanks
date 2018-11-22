@@ -97,21 +97,27 @@ public class GameView extends View implements GestureDetector.OnGestureListener 
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        if (tanks != null && !tanks.greenInMotion()) {
-            if (Math.abs(velocityX) >= Math.abs(velocityY)) {
-                if (velocityX < 0) {
-                    Log.d(Tanks.TAG, "Left swipe");
+        if (Math.abs(velocityX) >= Math.abs(velocityY)) {
+            if (velocityX < 0) {
+                Log.d(Tanks.TAG, "Left swipe");
+                if (tanks != null && (!tanks.greenInMotion() || tanks.greenInRightwardMotion())) {
                     tanks.handleGreenLeft();
-                } else {
-                    Log.d(Tanks.TAG, "Right swipe");
-                    tanks.handleGreenRight();
                 }
             } else {
-                if (velocityY < 0) {
-                    Log.d(Tanks.TAG, "Up swipe");
+                Log.d(Tanks.TAG, "Right swipe");
+                if (tanks != null && (!tanks.greenInMotion() || tanks.greenInLeftwardMotion())) {
+                    tanks.handleGreenRight();
+                }
+            }
+        } else {
+            if (velocityY < 0) {
+                Log.d(Tanks.TAG, "Up swipe");
+                if (tanks != null && (!tanks.greenInMotion() || tanks.greenInDownwardMotion())) {
                     tanks.handleGreenUp();
-                } else {
-                    Log.d(Tanks.TAG, "Down swipe");
+                }
+            } else {
+                Log.d(Tanks.TAG, "Down swipe");
+                if (tanks != null && (!tanks.greenInMotion() || tanks.greenInUpwardMotion())) {
                     tanks.handleGreenDown();
                 }
             }
