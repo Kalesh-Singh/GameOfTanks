@@ -10,6 +10,8 @@ import android.view.View;
 
 public class GameView extends View implements GestureDetector.OnGestureListener {
 
+    private static final long DELAY_MS = 30;
+
     private final Context context;
     private GestureDetectorCompat detector;
     private Bricks bricks = null;
@@ -44,7 +46,15 @@ public class GameView extends View implements GestureDetector.OnGestureListener 
             bricks.draw();
             tanks.setCanvas(canvas);
             tanks.draw();
+            tanks.updateGreenTankPosition();
         }
+
+        try {
+            Thread.sleep(DELAY_MS);
+        } catch (InterruptedException e) {
+            Log.e(Tanks.TAG, "Sleep interrupted!", e);
+        }
+
         invalidate();       // Forces a redraw.
     }
 
@@ -63,7 +73,9 @@ public class GameView extends View implements GestureDetector.OnGestureListener 
     }
 
     @Override
-    public void onShowPress(MotionEvent e) { return; }
+    public void onShowPress(MotionEvent e) {
+        return;
+    }
 
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
@@ -85,21 +97,23 @@ public class GameView extends View implements GestureDetector.OnGestureListener 
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        if (Math.abs(velocityX) >= Math.abs(velocityY)) {
-            if (velocityX < 0) {
-                Log.d(Tanks.TAG, "Left swipe");
-                tanks.handleGreenLeft();
+        if (tanks != null && !tanks.greenInMotion()) {
+            if (Math.abs(velocityX) >= Math.abs(velocityY)) {
+                if (velocityX < 0) {
+                    Log.d(Tanks.TAG, "Left swipe");
+                    tanks.handleGreenLeft();
+                } else {
+                    Log.d(Tanks.TAG, "Right swipe");
+                    tanks.handleGreenRight();
+                }
             } else {
-                Log.d(Tanks.TAG, "Right swipe");
-                tanks.handleGreenRight();
-            }
-        } else {
-            if (velocityY < 0) {
-                Log.d(Tanks.TAG, "Up swipe");
-                tanks.handleGreenUp();
-            } else {
-                Log.d(Tanks.TAG, "Down swipe");
-                tanks.handleGreenDown();
+                if (velocityY < 0) {
+                    Log.d(Tanks.TAG, "Up swipe");
+                    tanks.handleGreenUp();
+                } else {
+                    Log.d(Tanks.TAG, "Down swipe");
+                    tanks.handleGreenDown();
+                }
             }
         }
         return true;

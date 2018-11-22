@@ -6,11 +6,20 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.util.Log;
 
 import java.util.List;
 
 public class Tanks {
+
+    enum Direction {
+        UP, DOWN, LEFT, RIGHT
+    }
+
     static final String TAG = "Tanks";
+
+    private static final long DELAY_MS = 30;
+    private static final float TIME_STEP = DELAY_MS / 1000.f;
 
     private final Context context;
     private final List<Rect> brickRects;
@@ -32,7 +41,16 @@ public class Tanks {
 
     private Canvas canvas = null;
 
-    public Tanks(Context context, List<Rect> brickRects, int brickWidth, int brickHeight, int screenWidth, int screenHeight) {
+    private float ySpeed;
+    private float xSpeed;
+
+    private Direction greenDirection;
+
+    private int greenDestTop;
+    private int greenDestLeft;
+
+    public Tanks(Context context, List<Rect> brickRects, int brickWidth,
+                 int brickHeight, int screenWidth, int screenHeight) {
         this.context = context;
         this.brickRects = brickRects;
         this.brickWidth = brickWidth;
@@ -41,6 +59,8 @@ public class Tanks {
         this.tankHeight = Math.min(brickWidth, brickHeight) - 8;
         this.leftOffset = (brickWidth - tankWidth) / 2;
         this.topOffset = (brickHeight - tankHeight) / 2;
+        this.ySpeed = tankHeight / 5.f;
+        this.xSpeed = tankWidth / 5.f;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         this.greenTankBitmaps = getGreenTankBitmaps();
@@ -49,7 +69,46 @@ public class Tanks {
         this.redTank = redTankBitmaps.DOWN;
         this.greenTankRect = getGreenStartRect();
         this.redTankRect = getRedStartRect();
+        this.greenDirection = Direction.UP;
+        this.greenDestTop = greenTankRect.top;
+        this.greenDestLeft = greenTankRect.left;
 
+    }
+
+    public void updateGreenTankPosition() {
+        if (greenInUpwardMotion()) {
+            moveGreenUp();
+        } else if (greenInDownwardMotion()) {
+            moveGreenDown();
+        } else if (greenInLeftwardMotion()) {
+            moveGreenLeft();
+        } else if (greenInRightwardMotion()) {
+            moveGreenRight();
+        }
+    }
+
+    public boolean greenInMotion() {
+        return greenTankRect.top != greenDestTop || greenTankRect.left != greenDestLeft;
+    }
+
+    private boolean greenInUpwardMotion() {
+        return (greenDirection == Direction.UP)
+                && (greenTankRect.top != greenDestTop);
+    }
+
+    private boolean greenInDownwardMotion() {
+        return (greenDirection == Direction.DOWN)
+                && (greenTankRect.top != greenDestTop);
+    }
+
+    private boolean greenInLeftwardMotion() {
+        return (greenDirection == Direction.LEFT)
+                && (greenTankRect.left != greenDestLeft);
+    }
+
+    private boolean greenInRightwardMotion() {
+        return (greenDirection == Direction.RIGHT)
+                && (greenTankRect.left != greenDestLeft);
     }
 
     private Rect getGreenStartRect() {
@@ -111,24 +170,70 @@ public class Tanks {
 
     public void handleGreenUp() {
         greenTank = greenTankBitmaps.UP;
-//        greenTankRect.top -= brickHeight;
+        greenDirection = Direction.UP;
+        greenDestTop -= brickHeight;
+        moveGreenUp();
     }
 
     public void handleGreenDown() {
         greenTank = greenTankBitmaps.DOWN;
-//        greenTankRect.top -= brickHeight;
+        greenDirection = Direction.DOWN;
+        greenDestTop += brickHeight;
+        moveGreenDown();
     }
 
     public void handleGreenRight() {
-        // TODO:
         greenTank = greenTankBitmaps.RIGHT;
-//        greenTankRect.left += brickWidth;
+        greenDirection = Direction.UP;
+        greenDestLeft += brickWidth;
+        moveGreenRight();
     }
 
     public void handleGreenLeft() {
-        // TODO:
         greenTank = greenTankBitmaps.LEFT;
-//        greenTankRect.left -= brickWidth;
+        greenDirection = Direction.LEFT;
+        greenDestLeft -= brickWidth;
+        moveGreenLeft();
+    }
+
+    private void moveGreenUp() {
+        greenTankRect.top -= ySpeed * TIME_STEP;
+        greenTankRect.bottom -= ySpeed * TIME_STEP;
+        if (greenTankRect.top < greenDestTop) {
+            int depth = greenDestTop - greenTankRect.top;
+            greenTankRect.top += depth;
+            greenTankRect.bottom += depth;
+        }
+    }
+
+    private void moveGreenDown() {
+        greenTankRect.top += ySpeed * TIME_STEP;
+        greenTankRect.bottom += ySpeed * TIME_STEP;
+        if (greenTankRect.top > greenDestTop) {
+            int depth = greenTankRect.top - greenDestTop;
+            greenTankRect.top -= depth;
+            greenTankRect.bottom -= depth;
+        }
+    }
+
+    private void moveGreenRight() {
+        greenTankRect.left += ySpeed * TIME_STEP;
+        greenTankRect.right += ySpeed * TIME_STEP;
+        if (greenTankRect.left > greenDestLeft) {
+            int depth = greenTankRect.left - greenDestLeft;
+            greenTankRect.left -= depth;
+            greenTankRect.right -= depth;
+        }
+    }
+
+    private void moveGreenLeft() {
+        greenTankRect.left -= ySpeed * TIME_STEP;
+        greenTankRect.right -= ySpeed * TIME_STEP;
+        if (greenTankRect.left < greenDestLeft) {
+            int depth = greenDestLeft - greenTankRect.left;
+            greenTankRect.left += depth;
+            greenTankRect.right += depth;
+        }
     }
 
 }
