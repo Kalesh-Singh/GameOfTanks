@@ -16,6 +16,10 @@ public class Tanks {
         UP, DOWN, LEFT, RIGHT
     }
 
+    enum Tank {
+        GREEN, RED
+    }
+
     static final String TAG = "Tanks";
 
     private static final long DELAY_MS = 30;
@@ -73,6 +77,67 @@ public class Tanks {
         this.greenDestTop = greenTankRect.top;
         this.greenDestLeft = greenTankRect.left;
 
+    }
+
+    private boolean collides(Direction direction, Tank tank) {
+        int destLeft = 0;
+        int destTop = 0;
+
+        if (tank == Tank.GREEN) {
+            destLeft = greenDestLeft;
+            destTop = greenDestTop;
+        }
+        else if (tank == Tank.RED) {
+            // TODO: For red tank.
+        }
+        int destRight = destLeft + tankWidth;
+        int destBottom = destTop + tankHeight;
+
+        if (direction == Direction.UP) {
+            destTop -= brickHeight;
+            destBottom -= brickHeight;
+        } else if (direction == Direction.DOWN) {
+            destTop += brickHeight;
+            destBottom += brickHeight;
+        } else if (direction == Direction.LEFT) {
+            destLeft -= brickWidth;
+            destRight -= brickWidth;
+        } else if (direction == Direction.RIGHT) {
+            destLeft += brickWidth;
+            destRight += brickWidth;
+        }
+
+        // Would go off screen
+        if (destRight >= screenWidth || destLeft <= 0) {
+            return true;
+        }
+        if (destBottom >= screenHeight || destTop <= 0) {
+            return true;
+        }
+
+        int destCenterX = destLeft + (brickWidth / 2);
+        int destCenterY = destTop + (brickHeight / 2);
+
+        // Would collide with other tank
+        if (tank == Tank.GREEN) {
+            Log.d(TAG, "This is the green tank");
+            if (redTankRect.contains(destCenterX, destCenterY)) {
+                return true;
+            }
+        } else if (tank == Tank.RED) {
+            Log.d(TAG, "This is the red tank");
+            if (greenTankRect.contains(destCenterX, destCenterY)) {
+                return true;
+            }
+        }
+
+        // Would collide with bricks
+        for (Rect brickRect : brickRects) {
+            if (brickRect.contains(destCenterX, destCenterY)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void updateGreenTankPosition() {
@@ -174,34 +239,38 @@ public class Tanks {
 
     public void handleGreenUp() {
         greenTank = greenTankBitmaps.UP;
-        greenDirection = Direction.UP;
-        // TODO: Check for collision at destination before updating it.
-        greenDestTop -= brickHeight;
-        moveGreenUp();
+        if (!collides(Direction.UP, Tank.GREEN)) {
+            greenDirection = Direction.UP;
+            greenDestTop -= brickHeight;
+            moveGreenUp();
+        }
     }
 
     public void handleGreenDown() {
         greenTank = greenTankBitmaps.DOWN;
-        greenDirection = Direction.DOWN;
-        // TODO: Check for collision at destination before updating it.
-        greenDestTop += brickHeight;
-        moveGreenDown();
+        if (!collides(Direction.DOWN, Tank.GREEN)) {
+            greenDirection = Direction.DOWN;
+            greenDestTop += brickHeight;
+            moveGreenDown();
+        }
     }
 
     public void handleGreenRight() {
         greenTank = greenTankBitmaps.RIGHT;
-        greenDirection = Direction.RIGHT;
-        // TODO: Check for collision at destination before updating it.
-        greenDestLeft += brickWidth;
-        moveGreenRight();
+        if (!collides(Direction.RIGHT, Tank.GREEN)) {
+            greenDirection = Direction.RIGHT;
+            greenDestLeft += brickWidth;
+            moveGreenRight();
+        }
     }
 
     public void handleGreenLeft() {
         greenTank = greenTankBitmaps.LEFT;
-        greenDirection = Direction.LEFT;
-        // TODO: Check for collision at destination before updating it.
-        greenDestLeft -= brickWidth;
-        moveGreenLeft();
+        if (!collides(Direction.LEFT, Tank.GREEN)) {
+            greenDirection = Direction.LEFT;
+            greenDestLeft -= brickWidth;
+            moveGreenLeft();
+        }
     }
 
     private void moveGreenUp() {
