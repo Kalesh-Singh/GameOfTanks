@@ -97,17 +97,21 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
                 if (velocityX < 0) {
                     Log.d(TAG, "Left swipe");
                     greenTank.handleLeft(maze.getBricks(), redTank);
+//                    redTank.handleLeft(maze.getBricks(), greenTank);
                 } else {
                     Log.d(TAG, "Right swipe");
                     greenTank.handleRight(maze.getBricks(), redTank);
+//                    redTank.handleRight(maze.getBricks(), greenTank);
                 }
             } else {
                 if (velocityY < 0) {
                     Log.d(TAG, "Up swipe");
                     greenTank.handleUp(maze.getBricks(), redTank);
+//                    redTank.handleUp(maze.getBricks(), greenTank);
                 } else {
                     Log.d(TAG, "Down swipe");
                     greenTank.handleDown(maze.getBricks(), redTank);
+//                    redTank.handleDown(maze.getBricks(), greenTank);
                 }
             }
         }
