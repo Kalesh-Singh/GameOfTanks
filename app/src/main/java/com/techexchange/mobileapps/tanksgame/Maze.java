@@ -9,7 +9,7 @@ import android.graphics.Rect;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bricks {
+public class Maze {
 
     private final Context context;
     private final int screenWidth;
@@ -21,7 +21,7 @@ public class Bricks {
     private final List<Brick> bricks;
 
 
-    Bricks(Context context, int screenWidth, int screenHeight) {
+    Maze(Context context, int screenWidth, int screenHeight) {
         this.context = context;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -37,6 +37,10 @@ public class Bricks {
         for (Brick brick : bricks) {
             brick.draw(canvas);
         }
+    }
+
+    public List<Brick> getBricks() {
+        return this.bricks;
     }
 
     // ------------------------------- Private methods -----------------------------------

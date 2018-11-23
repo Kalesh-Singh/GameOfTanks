@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.util.Log;
 
 import java.util.List;
 
@@ -102,6 +103,8 @@ public class Tank {
 
     public void handleUp(List<Brick> bricks, Tank otherTank) {
         bitmap = bitmaps.up;
+        Log.d(BattlegroundView.TAG, "State: " + state);
+        Log.d(BattlegroundView.TAG, "Direction: " + direction);
         if (state == State.STATIONARY
                 || (state == State.IN_MOTION && direction == Direction.DOWN)) {
             if (!collides(bricks, otherTank)) {
@@ -114,6 +117,8 @@ public class Tank {
 
     public void handleDown(List<Brick> bricks, Tank otherTank) {
         bitmap = bitmaps.down;
+        Log.d(BattlegroundView.TAG, "State: " + state);
+        Log.d(BattlegroundView.TAG, "Direction: " + direction);
         if (state == State.STATIONARY
                 || (state == State.IN_MOTION && direction == Direction.UP)) {
             if (!collides(bricks, otherTank)) {
@@ -126,6 +131,8 @@ public class Tank {
 
     public void handleLeft(List<Brick> bricks, Tank otherTank) {
         bitmap = bitmaps.left;
+        Log.d(BattlegroundView.TAG, "State: " + state);
+        Log.d(BattlegroundView.TAG, "Direction: " + direction);
         if (state == State.STATIONARY
                 || (state == State.IN_MOTION && direction == Direction.RIGHT)) {
             if (!collides(bricks, otherTank)) {
@@ -136,8 +143,10 @@ public class Tank {
         }
     }
 
-    public void handleGreenRight(List<Brick> bricks, Tank otherTank) {
+    public void handleRight(List<Brick> bricks, Tank otherTank) {
         bitmap = bitmaps.right;
+        Log.d(BattlegroundView.TAG, "State: " + state);
+        Log.d(BattlegroundView.TAG, "Direction: " + direction);
         if (state == State.STATIONARY
                 || (state == State.IN_MOTION && direction == Direction.LEFT)) {
             if (!collides(bricks, otherTank)) {
