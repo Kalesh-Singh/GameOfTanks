@@ -207,13 +207,13 @@ public class Tanks {
         int left = greenTankRect.left;
         int top = greenTankRect.top;
 
-        if (greenDirection == Direction.UP) {
+        if (greenTank == greenTankBitmaps.UP) {
             top -= tankHeight / 2;
-        } else if (greenDirection == Direction.DOWN) {
+        } else if (greenTank == greenTankBitmaps.DOWN) {
             top += tankHeight / 2;
-        } else if (greenDirection == Direction.LEFT) {
+        } else if (greenTank == greenTankBitmaps.LEFT) {
             left -= tankHeight / 2;
-        } else if (greenDirection == Direction.RIGHT) {
+        } else if (greenTank == greenTankBitmaps.RIGHT) {
             left += tankHeight / 2;
         }
 
@@ -376,13 +376,13 @@ public class Tanks {
             greenFireballXSpeed = 0;
             greenFireballYSpeed = 0;
 
-            if (greenDirection == Direction.UP) {
+            if (greenTank == greenTankBitmaps.UP) {
                 greenFireballYSpeed = -shellYSpeed;
-            } else if (greenDirection == Direction.DOWN) {
+            } else if (greenTank == greenTankBitmaps.DOWN) {
                 greenFireballYSpeed = shellYSpeed;
-            } else if (greenDirection == Direction.LEFT) {
+            } else if (greenTank == greenTankBitmaps.LEFT) {
                 greenFireballXSpeed = -shellXSpeed;
-            } else if (greenDirection == Direction.RIGHT) {
+            } else if (greenTank == greenTankBitmaps.RIGHT) {
                 greenFireballXSpeed = shellXSpeed;
             }
         }
