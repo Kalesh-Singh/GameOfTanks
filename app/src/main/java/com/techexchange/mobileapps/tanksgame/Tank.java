@@ -7,6 +7,8 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 
+import java.util.List;
+
 public class Tank {
 
     static class Bitmaps {
@@ -34,6 +36,10 @@ public class Tank {
     enum Color {
         GREEN, RED
     }
+
+    // Constants
+    private static final long DELAY_MS = 30;
+    private static final float TIME_STEP = DELAY_MS / 1000.f;
 
     // Required Parameters
     private final Context context;
@@ -87,10 +93,169 @@ public class Tank {
 
     public void draw(Canvas canvas) {
         canvas.drawBitmap(bitmap, null, rect, null);
+        updatePosition();
     }
 
+    public Rect getRect() {
+        return this.rect;
+    }
+
+    public void handleUp(List<Brick> bricks, Tank otherTank) {
+        bitmap = bitmaps.up;
+        if (state == State.STATIONARY
+                || (state == State.IN_MOTION && direction == Direction.DOWN)) {
+            if (!collides(bricks, otherTank)) {
+                direction = Direction.UP;
+                destinationTop -= brickHeight;
+                moveUp();
+            }
+        }
+    }
+
+    public void handleDown(List<Brick> bricks, Tank otherTank) {
+        bitmap = bitmaps.down;
+        if (state == State.STATIONARY
+                || (state == State.IN_MOTION && direction == Direction.UP)) {
+            if (!collides(bricks, otherTank)) {
+                direction = Direction.DOWN;
+                destinationTop += brickHeight;
+                moveDown();
+            }
+        }
+    }
+
+    public void handleLeft(List<Brick> bricks, Tank otherTank) {
+        bitmap = bitmaps.left;
+        if (state == State.STATIONARY
+                || (state == State.IN_MOTION && direction == Direction.RIGHT)) {
+            if (!collides(bricks, otherTank)) {
+                direction = Direction.LEFT;
+                destinationLeft -= brickWidth;
+                moveLeft();
+            }
+        }
+    }
+
+    public void handleGreenRight(List<Brick> bricks, Tank otherTank) {
+        bitmap = bitmaps.right;
+        if (state == State.STATIONARY
+                || (state == State.IN_MOTION && direction == Direction.LEFT)) {
+            if (!collides(bricks, otherTank)) {
+                direction = Direction.RIGHT;
+                destinationLeft += brickWidth;
+                moveRight();
+            }
+        }
+    }
 
     // ------------------------------- Private methods -----------------------------------
+
+    private void updatePosition() {
+        if (state == State.IN_MOTION) {
+            if (direction == Direction.UP) {
+                moveUp();
+            } else if (direction == Direction.DOWN) {
+                moveDown();
+            } else if (direction == Direction.LEFT) {
+                moveLeft();
+            } else if (direction == Direction.RIGHT) {
+                moveRight();
+            }
+        }
+    }
+
+    private void moveUp() {
+        state = State.IN_MOTION;
+        rect.top -= ySpeed * TIME_STEP;
+        rect.bottom -= ySpeed * TIME_STEP;
+        if (rect.top <= destinationTop) {
+            state = State.STATIONARY;
+            int depth = destinationTop - rect.top;
+            rect.top += depth;
+            rect.bottom += depth;
+        }
+    }
+
+    private void moveDown() {
+        state = State.IN_MOTION;
+        rect.top += ySpeed * TIME_STEP;
+        rect.bottom += ySpeed * TIME_STEP;
+        if (rect.top >= destinationTop) {
+            state = State.STATIONARY;
+            int depth = rect.top - destinationTop;
+            rect.top -= depth;
+            rect.bottom -= depth;
+        }
+    }
+
+    private void moveLeft() {
+        state = State.IN_MOTION;
+        rect.left -= xSpeed * TIME_STEP;
+        rect.right -= xSpeed * TIME_STEP;
+        if (rect.left <= destinationLeft) {
+            state = State.STATIONARY;
+            int depth = destinationLeft - rect.left;
+            rect.left += depth;
+            rect.right += depth;
+        }
+    }
+
+    private void moveRight() {
+        state = State.IN_MOTION;
+        rect.left += xSpeed * TIME_STEP;
+        rect.right += xSpeed * TIME_STEP;
+        if (rect.left > destinationLeft) {
+            state = State.STATIONARY;
+            int depth = rect.left - destinationLeft;
+            rect.left -= depth;
+            rect.right -= depth;
+        }
+    }
+
+    private boolean collides(List<Brick> bricks, Tank otherTank) {
+        int destLeft = destinationLeft;
+        int destTop = destinationTop;
+        int destRight = destLeft + tankWidth;
+        int destBottom = destTop + tankHeight;
+
+        if (direction == Direction.UP) {
+            destTop -= brickHeight;
+            destBottom -= brickHeight;
+        } else if (direction == Direction.DOWN) {
+            destTop += brickHeight;
+            destBottom += brickHeight;
+        } else if (direction == Direction.LEFT) {
+            destLeft -= brickWidth;
+            destRight -= brickWidth;
+        } else if (direction == Direction.RIGHT) {
+            destLeft += brickWidth;
+            destRight += brickWidth;
+        }
+
+        // Would go off screen
+        if (destRight >= screenWidth || destLeft <= 0) {
+            return true;
+        }
+        if (destBottom >= screenHeight || destTop <= 0) {
+            return true;
+        }
+
+        int destCenterX = destLeft + (brickWidth / 2);
+        int destCenterY = destTop + (brickHeight / 2);
+
+        if (otherTank.getRect().contains(destCenterX, destCenterY)) {
+            return true;
+        }
+
+
+        // Would collide with bricks
+        for (Brick brick : bricks) {
+            if (brick.getRect().contains(destCenterX, destCenterY)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private Bitmap getRightBitmap() {
         Bitmap spriteSheet = BitmapFactory.decodeResource(context.getResources(),

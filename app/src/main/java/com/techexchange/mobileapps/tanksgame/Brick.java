@@ -49,16 +49,13 @@ public class Brick {
 
     private Condition condition;
 
-
-    void setCondition(Condition condition) {
-        this.condition = condition;
-    }
-
     Brick(Rect rect, Bitmaps bitmaps) {
         this.rect = rect;
         this.bitmaps = bitmaps;
         setCondition(Condition.GOOD);
     }
+
+    // ------------------------------- Public methods -----------------------------------
 
     public void draw(Canvas canvas) {
         if (condition != Condition.DESTROYED) {
@@ -69,5 +66,13 @@ public class Brick {
                 canvas.drawBitmap(bitmaps.damaged, null, rect, null);
             }
         }
+    }
+
+    public void setCondition(Condition condition) {
+        this.condition = condition;
+    }
+
+    public Rect getRect() {
+        return this.rect;
     }
 }
