@@ -25,8 +25,7 @@ public class BattlegroundView extends View {
         super.onDraw(canvas);
 
         if (this.bricks != null) {
-            bricks.setCanvas(canvas);
-            bricks.draw();
+            bricks.draw(canvas);
         }
 
         try {

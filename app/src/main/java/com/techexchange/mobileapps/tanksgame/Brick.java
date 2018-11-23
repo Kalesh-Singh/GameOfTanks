@@ -2,8 +2,6 @@ package com.techexchange.mobileapps.tanksgame;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class Brick {
@@ -12,7 +10,7 @@ public class Brick {
         Bitmap good;
         Bitmap damaged;
 
-        public Bitmaps(Bitmap good, Bitmap damaged) {
+        Bitmaps(Bitmap good, Bitmap damaged) {
             this.good = good;
             this.damaged = damaged;
         }
@@ -45,9 +43,10 @@ public class Brick {
         GOOD, DAMAGED, DESTROYED
     }
 
-    // Parameters
+    // Required Parameters
     private final Rect rect;
     private final Bitmaps bitmaps;
+
     private Condition condition;
 
 

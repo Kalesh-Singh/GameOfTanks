@@ -11,7 +11,6 @@ import java.util.List;
 
 public class Bricks {
 
-    // Required parameters
     private final Context context;
     private final int screenWidth;
     private final int screenHeight;
@@ -21,9 +20,8 @@ public class Bricks {
     private final Brick.Bitmaps bitmaps;
     private final List<Brick> bricks;
 
-    private Canvas canvas;
 
-    public Bricks(Context context, int screenWidth, int screenHeight) {
+    Bricks(Context context, int screenWidth, int screenHeight) {
         this.context = context;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -31,19 +29,11 @@ public class Bricks {
         this.brickHeight = screenHeight / 12;
         this.bitmaps = getBitmaps();
         this.bricks = new ArrayList<>();
-        this.canvas = null;
+        createMaze();
     }
 
     // ------------------------------- Public methods -----------------------------------
-
-    public void setCanvas(Canvas canvas) {
-        this.canvas = canvas;
-
-        // Create the maze only once the canvas is set.
-        this.createMaze();
-    }
-
-    public void draw() {
+    public void draw(Canvas canvas) {
         for (Brick brick : bricks) {
             brick.draw(canvas);
         }
@@ -67,7 +57,6 @@ public class Bricks {
         for (int i = 0; i < numBricks; ++i) {
             Rect rect = new Brick.Rectangle(start, brickWidth, brickHeight).getRect();
             Brick brick = new Brick(rect, this.bitmaps);
-            brick.setCondition(Brick.Condition.DAMAGED);        // TODO: Delete
             this.bricks.add(brick);
             start.top += brickHeight;
         }
