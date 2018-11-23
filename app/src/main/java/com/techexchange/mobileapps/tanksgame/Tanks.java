@@ -52,6 +52,11 @@ public class Tanks {
 
     private int greenDestTop;
     private int greenDestLeft;
+    private int redDestTop;
+    private int redDestLeft;
+
+    private Rect greenShellRect = null;
+    private Rect redShellRect = null;
 
     public Tanks(Context context, List<Rect> brickRects, int brickWidth,
                  int brickHeight, int screenWidth, int screenHeight) {
