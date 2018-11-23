@@ -91,7 +91,7 @@ public class GameView extends View implements GestureDetector.OnGestureListener 
     public void onLongPress(MotionEvent e) {
         Log.d(Tanks.TAG, "LongPress");
         Log.d(Tanks.TAG, "SHELL fired!");
-        // TODO: Shoot firebomb
+        tanks.handleGreenShoot();
 
     }
 

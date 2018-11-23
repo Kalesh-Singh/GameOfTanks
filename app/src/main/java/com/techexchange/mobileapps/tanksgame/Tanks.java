@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Tanks {
@@ -55,8 +56,16 @@ public class Tanks {
     private int redDestTop;
     private int redDestLeft;
 
-    private Rect greenShellRect = null;
-    private Rect redShellRect = null;
+    private Rect greenFireballRect;
+    private Rect redFireballRect;
+
+    float shellXSpeed;
+    float shellYSpeed;
+
+    float greenFireballXSpeed;
+    float greenFireballYSpeed;
+
+    private List<Bitmap> explosionBitmaps;
 
     public Tanks(Context context, List<Rect> brickRects, int brickWidth,
                  int brickHeight, int screenWidth, int screenHeight) {
@@ -70,6 +79,8 @@ public class Tanks {
         this.topOffset = (brickHeight - tankHeight) / 2;
         this.ySpeed = tankHeight * 2.f;
         this.xSpeed = tankWidth * 2.f;
+        this.shellXSpeed = 3 * xSpeed;
+        this.shellYSpeed = 3 * ySpeed;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         this.greenTankBitmaps = getGreenTankBitmaps();
@@ -81,10 +92,15 @@ public class Tanks {
         this.greenDirection = Direction.UP;
         this.greenDestTop = greenTankRect.top;
         this.greenDestLeft = greenTankRect.left;
-
+        this.explosionBitmaps = getExplosionBitmaps();
+        this.greenFireballRect = null;
+        this.greenFireballXSpeed = 0;
+        this.greenFireballYSpeed = 0;
     }
 
-    private boolean collides(Direction direction, Tank tank) {
+
+
+    private boolean tankCollides(Direction direction, Tank tank) {
         int destLeft = 0;
         int destTop = 0;
 
@@ -187,6 +203,23 @@ public class Tanks {
         return new TankRect(start, tankWidth, tankHeight).getRect();
     }
 
+    private Rect getGreenExplosionRect() {
+        int left = greenTankRect.left;
+        int top = greenTankRect.top;
+
+        if (greenDirection == Direction.UP) {
+            top -= tankHeight / 2;
+        } else if (greenDirection == Direction.DOWN) {
+            top += tankHeight / 2;
+        } else if (greenDirection == Direction.LEFT) {
+            left -= tankHeight / 2;
+        } else if (greenDirection == Direction.RIGHT) {
+            left += tankHeight / 2;
+        }
+
+        return new Rect(left, top, left + tankWidth, top + tankHeight);
+    }
+
     private Rect getRedStartRect() {
         Start start = new Start(leftOffset + screenWidth - (4 * brickWidth), topOffset);
         return new TankRect(start, tankWidth, tankHeight).getRect();
@@ -199,6 +232,10 @@ public class Tanks {
     public void draw() {
         canvas.drawBitmap(greenTank, null, greenTankRect, null);
         canvas.drawBitmap(redTank, null, redTankRect, null);
+        if (greenFireballRect != null) {
+            canvas.drawBitmap(explosionBitmaps.get(1), null, greenFireballRect, null);
+            moveGreenShell();
+        }
     }
 
     private Bitmap getGreenTankRightBitmap() {
@@ -207,6 +244,21 @@ public class Tanks {
         int tileWidth = spriteSheet.getWidth() / 8;
         int tileHeight = spriteSheet.getHeight() / 8;
         return Bitmap.createBitmap(spriteSheet, 0, 0, tileWidth, tileHeight);
+    }
+
+    private List<Bitmap> getExplosionBitmaps() {
+       List<Bitmap> explosionBitmaps = new ArrayList<>();
+        Bitmap spriteSheet = BitmapFactory.decodeResource(context.getResources(), R.drawable.explosions);
+        int tileWidth = spriteSheet.getWidth() / 8;
+        int tileHeight = spriteSheet.getHeight() / 4;
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                Bitmap explosion = Bitmap.createBitmap(spriteSheet,
+                        j * tileWidth, i * tileHeight, tileWidth, tileHeight);
+                explosionBitmaps.add(explosion);
+            }
+        }
+        return explosionBitmaps;
     }
 
     private Bitmap getRedTankRightBitmap() {
@@ -244,7 +296,7 @@ public class Tanks {
 
     public void handleGreenUp() {
         greenTank = greenTankBitmaps.UP;
-        if (!collides(Direction.UP, Tank.GREEN)) {
+        if (!tankCollides(Direction.UP, Tank.GREEN)) {
             greenDirection = Direction.UP;
             greenDestTop -= brickHeight;
             moveGreenUp();
@@ -253,7 +305,7 @@ public class Tanks {
 
     public void handleGreenDown() {
         greenTank = greenTankBitmaps.DOWN;
-        if (!collides(Direction.DOWN, Tank.GREEN)) {
+        if (!tankCollides(Direction.DOWN, Tank.GREEN)) {
             greenDirection = Direction.DOWN;
             greenDestTop += brickHeight;
             moveGreenDown();
@@ -262,7 +314,7 @@ public class Tanks {
 
     public void handleGreenRight() {
         greenTank = greenTankBitmaps.RIGHT;
-        if (!collides(Direction.RIGHT, Tank.GREEN)) {
+        if (!tankCollides(Direction.RIGHT, Tank.GREEN)) {
             greenDirection = Direction.RIGHT;
             greenDestLeft += brickWidth;
             moveGreenRight();
@@ -271,7 +323,7 @@ public class Tanks {
 
     public void handleGreenLeft() {
         greenTank = greenTankBitmaps.LEFT;
-        if (!collides(Direction.LEFT, Tank.GREEN)) {
+        if (!tankCollides(Direction.LEFT, Tank.GREEN)) {
             greenDirection = Direction.LEFT;
             greenDestLeft -= brickWidth;
             moveGreenLeft();
@@ -317,4 +369,30 @@ public class Tanks {
             greenTankRect.right += depth;
         }
     }
+
+    public void handleGreenShoot() {
+        if (greenFireballRect == null) {
+            greenFireballRect = getGreenExplosionRect();
+            greenFireballXSpeed = 0;
+            greenFireballYSpeed = 0;
+
+            if (greenDirection == Direction.UP) {
+                greenFireballYSpeed = -shellYSpeed;
+            } else if (greenDirection == Direction.DOWN) {
+                greenFireballYSpeed = shellYSpeed;
+            } else if (greenDirection == Direction.LEFT) {
+                greenFireballXSpeed = -shellXSpeed;
+            } else if (greenDirection == Direction.RIGHT) {
+                greenFireballXSpeed = shellXSpeed;
+            }
+        }
+    }
+
+    private void moveGreenShell() {
+        greenFireballRect.left += greenFireballXSpeed * TIME_STEP;
+        greenFireballRect.right += greenFireballXSpeed * TIME_STEP;
+        greenFireballRect.top += greenFireballYSpeed * TIME_STEP;
+        greenFireballRect.bottom += greenFireballYSpeed * TIME_STEP;
+    }
+
 }
