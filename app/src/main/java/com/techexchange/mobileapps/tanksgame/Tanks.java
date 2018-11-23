@@ -98,7 +98,44 @@ public class Tanks {
         this.greenFireballYSpeed = 0;
     }
 
+    private boolean shellCollides(Tank tank) {
+        Rect shellRect = null;
+        if (tank == Tank.GREEN) {
+            shellRect = greenFireballRect;
+        } else {
+            // TODO: handle when tank is red.
+        }
 
+        // Would go off screen
+        if (shellRect.centerX() >= screenWidth || shellRect.centerX() <= 0) {
+            return true;
+        }
+        if (shellRect.centerY() >= screenHeight || shellRect.centerY() <= 0) {
+            return true;
+        }
+
+        // Collides with bricks
+        for (Rect brickRect : brickRects) {
+            if (brickRect.contains(shellRect.centerX(), shellRect.centerY())) {
+                return true;
+            }
+        }
+
+        // Collides with other tank
+        if (tank == Tank.GREEN) {
+            Log.d(TAG, "This is the green tank");
+            if (redTankRect.contains(shellRect.centerX(), shellRect.centerY())) {
+                return true;
+            }
+        } else if (tank == Tank.RED) {
+            Log.d(TAG, "This is the red tank");
+            if (greenTankRect.contains(shellRect.centerX(), shellRect.centerY())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     private boolean tankCollides(Direction direction, Tank tank) {
         int destLeft = 0;
@@ -111,6 +148,7 @@ public class Tanks {
         else if (tank == Tank.RED) {
             // TODO: For red tank.
         }
+
         int destRight = destLeft + tankWidth;
         int destBottom = destTop + tankHeight;
 
@@ -235,6 +273,9 @@ public class Tanks {
         if (greenFireballRect != null) {
             canvas.drawBitmap(explosionBitmaps.get(1), null, greenFireballRect, null);
             moveGreenShell();
+            if (shellCollides(Tank.GREEN)) {
+                greenFireballRect = null;
+            }
         }
     }
 
