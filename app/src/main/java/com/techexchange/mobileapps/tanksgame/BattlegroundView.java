@@ -13,6 +13,8 @@ public class BattlegroundView extends View {
 
     private final Context context;
     private Bricks bricks;
+    private Tank greenTank;     // TODO: Delete these
+    private Tank redTank;
 
     public BattlegroundView(Context context) {
         super(context);
@@ -26,6 +28,8 @@ public class BattlegroundView extends View {
 
         if (this.bricks != null) {
             bricks.draw(canvas);
+            greenTank.draw(canvas);
+            redTank.draw(canvas);
         }
 
         try {
@@ -42,5 +46,7 @@ public class BattlegroundView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
 
         bricks = new Bricks(this.context, w, h);
+        greenTank = new Tank(this.context, Tank.Color.GREEN, w, h);
+        redTank = new Tank(this.context, Tank.Color.RED, w, h);
     }
 }

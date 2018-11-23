@@ -3,6 +3,7 @@ package com.techexchange.mobileapps.tanksgame;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 
@@ -81,6 +82,15 @@ public class Tank {
         this.destinationLeft = rect.left;
         this.destinationTop = rect.top;
     }
+
+    // ------------------------------- Public methods -----------------------------------
+
+    public void draw(Canvas canvas) {
+        canvas.drawBitmap(bitmap, null, rect, null);
+    }
+
+
+    // ------------------------------- Private methods -----------------------------------
 
     private Bitmap getRightBitmap() {
         Bitmap spriteSheet = BitmapFactory.decodeResource(context.getResources(),
