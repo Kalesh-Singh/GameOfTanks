@@ -63,8 +63,8 @@ public class Tanks {
         this.tankHeight = Math.min(brickWidth, brickHeight) - 8;
         this.leftOffset = (brickWidth - tankWidth) / 2;
         this.topOffset = (brickHeight - tankHeight) / 2;
-        this.ySpeed = tankHeight / 2.f;
-        this.xSpeed = tankWidth / 2.f;
+        this.ySpeed = tankHeight * 2.f;
+        this.xSpeed = tankWidth * 2.f;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         this.greenTankBitmaps = getGreenTankBitmaps();
