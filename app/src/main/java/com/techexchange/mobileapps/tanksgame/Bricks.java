@@ -57,7 +57,7 @@ public class Bricks {
     }
 
     private void createMaze() {
-        Start start = createColumn(new Start(150, 0), 3);
+        Start start = createColumn(new Start(2 * brickWidth, 0), 3);
         createRow(start, 3);
         createRow(new Start(screenWidth - (3 * brickWidth), 0), 2);
         start = createRow(new Start(screenWidth - (6 * brickWidth),
