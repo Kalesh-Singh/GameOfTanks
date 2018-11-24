@@ -171,7 +171,7 @@ public class Shell {
             return true;
         }
 
-        // Would collide with bricks
+        // Collides with bricks
         for (Brick brick : bricks) {
             if (brick.getRect().contains(rect.centerX(), rect.centerY())) {
                 this.collidedBrick = brick;
@@ -185,7 +185,8 @@ public class Shell {
 
     private List<Bitmap> getShellBitmaps() {
         List<Bitmap> explosionBitmaps = new ArrayList<>();
-        Bitmap spriteSheet = BitmapFactory.decodeResource(context.getResources(), R.drawable.explosions);
+        Bitmap spriteSheet = BitmapFactory.decodeResource(context.getResources(),
+                R.drawable.explosions);
         int tileWidth = spriteSheet.getWidth() / 8;
         int tileHeight = spriteSheet.getHeight() / 4;
         for (int i = 0; i < 4; ++i) {
