@@ -38,8 +38,8 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
 
         if (this.maze != null) {
             maze.draw(canvas);
-            greenTank.draw(canvas);
-            redTank.draw(canvas);
+            greenTank.draw(canvas, maze.getBricks(), redTank);
+            redTank.draw(canvas, maze.getBricks(), redTank);
         }
 
         try {
@@ -87,7 +87,8 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
 
     @Override
     public void onLongPress(MotionEvent e) {
-        // TODO: Shoot shell
+        greenTank.getShell().getExplosionRect(greenTank.getRect(), greenTank.getDirection());
+//        redTank.getShell().getExplosionRect(redTank.getRect(), redTank.getDirection());
     }
 
     @Override

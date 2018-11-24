@@ -63,6 +63,7 @@ public class Tank {
     private Rect rect;
     private int destinationLeft;
     private int destinationTop;
+    private Shell shell;
 
 
     public Tank(Context context, Color color, int screenWidth, int screenHeight) {
@@ -87,17 +88,27 @@ public class Tank {
         this.rect = getStartRect();
         this.destinationLeft = rect.left;
         this.destinationTop = rect.top;
+        this.shell = new Shell(context, screenWidth, screenHeight, tankWidth, tankHeight, xSpeed, ySpeed);
     }
 
     // ------------------------------- Public methods -----------------------------------
 
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, List<Brick> bricks, Tank otherTank) {
         canvas.drawBitmap(bitmap, null, rect, null);
+        this.shell.draw(canvas, bricks, otherTank);
         updatePosition();
     }
 
     public Rect getRect() {
         return this.rect;
+    }
+
+    public Shell getShell() {
+        return this.shell;
+    }
+
+    public Direction getDirection() {
+        return  this.direction;
     }
 
     public void handleUp(List<Brick> bricks, Tank otherTank) {
@@ -243,6 +254,7 @@ public class Tank {
         int destCenterX = destLeft + (brickWidth / 2);
         int destCenterY = destTop + (brickHeight / 2);
 
+        // Collides with other tank.
         if (otherTank.getRect().contains(destCenterX, destCenterY)) {
             return true;
         }
