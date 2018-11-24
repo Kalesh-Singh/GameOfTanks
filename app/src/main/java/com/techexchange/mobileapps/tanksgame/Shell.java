@@ -34,6 +34,7 @@ public class Shell {
     private Tank.Direction direction;
     private Rect rect;
     private State state;
+    private Brick collidedBrick;
 
     public Shell(Context context, int screenWidth, int screenHeight, int tankWidth, int tankHeight, int tankXSpeed, int tankYSpeed) {
         this.context = context;
@@ -49,6 +50,7 @@ public class Shell {
         this.direction = null;
         this.rect = null;
         this.state = State.COLLIDED;
+        this.collidedBrick = null;
     }
 
     // ------------------------------- Public methods -----------------------------------
@@ -91,6 +93,15 @@ public class Shell {
             if (bitmapIndex < bitmaps.size() - 1) {
                 bitmapIndex += 1;
             } else {
+                if (collidedBrick != null) {
+                    Brick.Condition brickCondition = collidedBrick.getCondition();
+                    if (brickCondition == Brick.Condition.GOOD) {
+                        collidedBrick.setCondition(Brick.Condition.DAMAGED);
+                    } else if (brickCondition == Brick.Condition.DAMAGED) {
+                        bricks.remove(collidedBrick);
+                    }
+                    collidedBrick = null;
+                }
                 bitmapIndex = START_INDEX;
                 rect = null;
                 direction = null;
@@ -156,12 +167,14 @@ public class Shell {
 
         // Collides with other tank.
         if (otherTank.getRect().contains(rect.centerX(), rect.centerY())) {
+            // TODO: Update player points
             return true;
         }
 
         // Would collide with bricks
         for (Brick brick : bricks) {
             if (brick.getRect().contains(rect.centerX(), rect.centerY())) {
+                this.collidedBrick = brick;
                 return true;
             }
         }

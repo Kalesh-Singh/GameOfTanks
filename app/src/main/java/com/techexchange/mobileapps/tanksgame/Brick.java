@@ -72,6 +72,10 @@ public class Brick {
         this.condition = condition;
     }
 
+    public Condition getCondition() {
+        return this.condition;
+    }
+
     public Rect getRect() {
         return this.rect;
     }
