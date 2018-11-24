@@ -198,6 +198,4 @@ public class Shell {
         }
         return explosionBitmaps;
     }
-
-
 }
