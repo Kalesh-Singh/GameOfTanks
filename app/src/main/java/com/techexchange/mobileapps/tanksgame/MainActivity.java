@@ -57,6 +57,19 @@ public class MainActivity extends AppCompatActivity {
     SendReceiveThread sendReceiveThread;
 
     Host host;
+    BattlegroundView battlegroundView;
+
+    // Actions
+    static final byte GREEN_TANK_UP = 0;
+    static final byte GREEN_TANK_DOWN = 1;
+    static final byte GREEN_TANK_LEFT = 2;
+    static final byte GREEN_TANK_RIGHT = 3;
+    static final byte GREEN_TANK_SHOOT = 4;
+    static final byte RED_TANK_UP = 5;
+    static final byte RED_TANK_DOWN = 6;
+    static final byte RED_TANK_LEFT = 7;
+    static final byte RED_TANK_RIGHT = 8;
+    static final byte RED_TANK_SHOOT = 9;
 
     enum Host {
         SERVER, CLIENT
@@ -163,9 +176,11 @@ public class MainActivity extends AppCompatActivity {
         switch (msg.what) {
             case MESSAGE_READ:
                 byte[] readBuffer = (byte[]) msg.obj;
-                String tempMsg = new String(readBuffer, 0, msg.arg1);
-                readMsgTextView.setText(tempMsg);
-                break;
+//                String tempMsg = new String(readBuffer, 0, msg.arg1);
+//                readMsgTextView.setText(tempMsg);
+
+                byte action = readBuffer[0];
+                battlegroundView.handleAction(action);
         }
         return true;
     });
@@ -274,7 +289,8 @@ public class MainActivity extends AppCompatActivity {
 
             if (info.groupFormed && info.isGroupOwner) {
                 // TODO: Testing
-                setContentView(new BattlegroundView(MainActivity.this));
+                battlegroundView = new BattlegroundView(MainActivity.this);
+                setContentView(battlegroundView);
                 host = Host.SERVER;
 
                 serverThread = new ServerThread();

@@ -8,6 +8,17 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import static com.techexchange.mobileapps.tanksgame.MainActivity.GREEN_TANK_DOWN;
+import static com.techexchange.mobileapps.tanksgame.MainActivity.GREEN_TANK_LEFT;
+import static com.techexchange.mobileapps.tanksgame.MainActivity.GREEN_TANK_RIGHT;
+import static com.techexchange.mobileapps.tanksgame.MainActivity.GREEN_TANK_SHOOT;
+import static com.techexchange.mobileapps.tanksgame.MainActivity.GREEN_TANK_UP;
+import static com.techexchange.mobileapps.tanksgame.MainActivity.RED_TANK_DOWN;
+import static com.techexchange.mobileapps.tanksgame.MainActivity.RED_TANK_LEFT;
+import static com.techexchange.mobileapps.tanksgame.MainActivity.RED_TANK_RIGHT;
+import static com.techexchange.mobileapps.tanksgame.MainActivity.RED_TANK_SHOOT;
+import static com.techexchange.mobileapps.tanksgame.MainActivity.RED_TANK_UP;
+
 public class BattlegroundView extends View implements GestureDetector.OnGestureListener {
 
     static final String TAG = "Game";
@@ -18,9 +29,9 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
     private final MainActivity activity;
     private final GestureDetectorCompat detector;
 
-    private Maze maze;
-    private Tank greenTank;     // TODO: Delete these
-    private Tank redTank;
+    Maze maze;
+    Tank greenTank;     // TODO: Delete these
+    Tank redTank;
 
     public BattlegroundView(Context context) {
         super(context);
@@ -98,20 +109,26 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        if (greenTank != null) {
+        Log.d(TAG, "Green tank " + greenTank);
+        Log.d(TAG, "Red tank " + redTank);
+        if (greenTank != null && redTank != null && activity.sendReceiveThread != null) {
             if (Math.abs(velocityX) >= Math.abs(velocityY)) {
                 if (velocityX < 0) {
                     Log.d(TAG, "Left swipe");
                     if (activity.host == MainActivity.Host.SERVER) {
+                        activity.sendReceiveThread.write(new byte[]{GREEN_TANK_LEFT});
                         greenTank.handleLeft(maze.getBricks(), redTank);
                     } else {
+                        activity.sendReceiveThread.write(new byte[]{RED_TANK_LEFT});
                         redTank.handleLeft(maze.getBricks(), greenTank);
                     }
                 } else {
                     Log.d(TAG, "Right swipe");
                     if (activity.host == MainActivity.Host.SERVER) {
+                        activity.sendReceiveThread.write(new byte[]{GREEN_TANK_RIGHT});
                         greenTank.handleRight(maze.getBricks(), redTank);
                     } else {
+                        activity.sendReceiveThread.write(new byte[]{RED_TANK_RIGHT});
                         redTank.handleRight(maze.getBricks(), greenTank);
                     }
 
@@ -120,20 +137,61 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
                 if (velocityY < 0) {
                     Log.d(TAG, "Up swipe");
                     if (activity.host == MainActivity.Host.SERVER) {
+                        activity.sendReceiveThread.write(new byte[]{GREEN_TANK_UP});
                         greenTank.handleUp(maze.getBricks(), redTank);
                     } else {
+                        activity.sendReceiveThread.write(new byte[]{RED_TANK_UP});
                         redTank.handleUp(maze.getBricks(), greenTank);
                     }
                 } else {
                     Log.d(TAG, "Down swipe");
                     if (activity.host == MainActivity.Host.SERVER) {
+                        activity.sendReceiveThread.write(new byte[]{GREEN_TANK_DOWN});
                         greenTank.handleDown(maze.getBricks(), redTank);
                     } else {
+                        activity.sendReceiveThread.write(new byte[]{RED_TANK_DOWN});
                         redTank.handleDown(maze.getBricks(), greenTank);
                     }
                 }
             }
         }
         return true;
+    }
+
+    public void handleAction(byte action) {
+        if (greenTank != null && redTank != null) {
+            switch (action) {
+                case GREEN_TANK_UP:
+                    greenTank.handleUp(maze.getBricks(), redTank);
+                    break;
+                case GREEN_TANK_DOWN:
+                    greenTank.handleDown(maze.getBricks(), redTank);
+                    break;
+                case GREEN_TANK_LEFT:
+                    greenTank.handleLeft(maze.getBricks(), redTank);
+                    break;
+                case GREEN_TANK_RIGHT:
+                    greenTank.handleRight(maze.getBricks(), redTank);
+                    break;
+                case GREEN_TANK_SHOOT:
+                    greenTank.getShell().getExplosionRect(greenTank.getRect(), greenTank.getDirection());
+                    break;
+                case RED_TANK_UP:
+                    redTank.handleUp(maze.getBricks(), greenTank);
+                    break;
+                case RED_TANK_DOWN:
+                    redTank.handleDown(maze.getBricks(), greenTank);
+                    break;
+                case RED_TANK_LEFT:
+                    redTank.handleLeft(maze.getBricks(), greenTank);
+                    break;
+                case RED_TANK_RIGHT:
+                    redTank.handleRight(maze.getBricks(), greenTank);
+                    break;
+                case RED_TANK_SHOOT:
+                    redTank.getShell().getExplosionRect(redTank.getRect(), redTank.getDirection());
+                    break;
+            }
+        }
     }
 }
