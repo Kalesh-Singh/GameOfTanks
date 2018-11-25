@@ -15,6 +15,7 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
     private static final long DELAY_MS = 30;
 
     private final Context context;
+    private final MainActivity activity;
     private final GestureDetectorCompat detector;
 
     private Maze maze;
@@ -25,6 +26,7 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
         super(context);
 
         this.context = context;
+        this.activity = (MainActivity) context;
         this.detector = new GestureDetectorCompat(context, this);
 
         this.maze = null;
@@ -87,8 +89,11 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
 
     @Override
     public void onLongPress(MotionEvent e) {
-        greenTank.getShell().getExplosionRect(greenTank.getRect(), greenTank.getDirection());
-//        redTank.getShell().getExplosionRect(redTank.getRect(), redTank.getDirection());
+        if (activity.host == MainActivity.Host.SERVER) {
+            greenTank.getShell().getExplosionRect(greenTank.getRect(), greenTank.getDirection());
+        } else {
+            redTank.getShell().getExplosionRect(redTank.getRect(), redTank.getDirection());
+        }
     }
 
     @Override
@@ -97,22 +102,35 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
             if (Math.abs(velocityX) >= Math.abs(velocityY)) {
                 if (velocityX < 0) {
                     Log.d(TAG, "Left swipe");
-                    greenTank.handleLeft(maze.getBricks(), redTank);
-//                    redTank.handleLeft(maze.getBricks(), greenTank);
+                    if (activity.host == MainActivity.Host.SERVER) {
+                        greenTank.handleLeft(maze.getBricks(), redTank);
+                    } else {
+                        redTank.handleLeft(maze.getBricks(), greenTank);
+                    }
                 } else {
                     Log.d(TAG, "Right swipe");
-                    greenTank.handleRight(maze.getBricks(), redTank);
-//                    redTank.handleRight(maze.getBricks(), greenTank);
+                    if (activity.host == MainActivity.Host.SERVER) {
+                        greenTank.handleRight(maze.getBricks(), redTank);
+                    } else {
+                        redTank.handleRight(maze.getBricks(), greenTank);
+                    }
+
                 }
             } else {
                 if (velocityY < 0) {
                     Log.d(TAG, "Up swipe");
-                    greenTank.handleUp(maze.getBricks(), redTank);
-//                    redTank.handleUp(maze.getBricks(), greenTank);
+                    if (activity.host == MainActivity.Host.SERVER) {
+                        greenTank.handleUp(maze.getBricks(), redTank);
+                    } else {
+                        redTank.handleUp(maze.getBricks(), greenTank);
+                    }
                 } else {
                     Log.d(TAG, "Down swipe");
-                    greenTank.handleDown(maze.getBricks(), redTank);
-//                    redTank.handleDown(maze.getBricks(), greenTank);
+                    if (activity.host == MainActivity.Host.SERVER) {
+                        greenTank.handleDown(maze.getBricks(), redTank);
+                    } else {
+                        redTank.handleDown(maze.getBricks(), greenTank);
+                    }
                 }
             }
         }
