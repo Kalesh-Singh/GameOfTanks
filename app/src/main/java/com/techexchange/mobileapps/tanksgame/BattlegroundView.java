@@ -159,7 +159,7 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
     }
 
     public void handleAction(byte action) {
-        if (greenTank != null && redTank != null) {
+        if (greenTank != null && redTank != null && maze != null) {
             switch (action) {
                 case GREEN_TANK_UP:
                     greenTank.handleUp(maze.getBricks(), redTank);
