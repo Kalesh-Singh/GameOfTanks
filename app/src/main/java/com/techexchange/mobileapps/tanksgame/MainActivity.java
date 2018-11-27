@@ -297,9 +297,9 @@ public class MainActivity extends AppCompatActivity {
                 serverThread.start();
             } else if (info.groupFormed) {
                 // TODO: Testing
-                setContentView(new BattlegroundView(MainActivity.this));
+                battlegroundView = new BattlegroundView(MainActivity.this);
+                setContentView(battlegroundView);
                 host = Host.CLIENT;
-
 
                 clientThread = new ClientThread(groupOwnerAddress);
                 clientThread.start();

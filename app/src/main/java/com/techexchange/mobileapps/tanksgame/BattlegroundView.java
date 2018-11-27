@@ -101,8 +101,10 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
     @Override
     public void onLongPress(MotionEvent e) {
         if (activity.host == MainActivity.Host.SERVER) {
+            activity.sendReceiveThread.write(new byte[]{GREEN_TANK_SHOOT});
             greenTank.getShell().getExplosionRect(greenTank.getRect(), greenTank.getDirection());
-        } else {
+        } else if (activity.host == MainActivity.Host.CLIENT){
+            activity.sendReceiveThread.write(new byte[]{RED_TANK_SHOOT});
             redTank.getShell().getExplosionRect(redTank.getRect(), redTank.getDirection());
         }
     }
@@ -111,7 +113,7 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         Log.d(TAG, "Green tank " + greenTank);
         Log.d(TAG, "Red tank " + redTank);
-        if (greenTank != null && redTank != null && activity.sendReceiveThread != null) {
+//        if (greenTank != null && redTank != null && activity.sendReceiveThread != null) {
             if (Math.abs(velocityX) >= Math.abs(velocityY)) {
                 if (velocityX < 0) {
                     Log.d(TAG, "Left swipe");
@@ -154,12 +156,12 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
                     }
                 }
             }
-        }
+//        }
         return true;
     }
 
     public void handleAction(byte action) {
-        if (greenTank != null && redTank != null && maze != null) {
+//        if (greenTank != null && redTank != null && maze != null) {
             switch (action) {
                 case GREEN_TANK_UP:
                     greenTank.handleUp(maze.getBricks(), redTank);
@@ -192,6 +194,6 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
                     redTank.getShell().getExplosionRect(redTank.getRect(), redTank.getDirection());
                     break;
             }
-        }
+//        }
     }
 }
