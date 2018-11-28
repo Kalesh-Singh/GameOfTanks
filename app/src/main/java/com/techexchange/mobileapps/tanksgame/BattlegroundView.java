@@ -52,7 +52,7 @@ public class BattlegroundView extends View implements GestureDetector.OnGestureL
         if (this.maze != null) {
             maze.draw(canvas);
             greenTank.draw(canvas, maze.getBricks(), redTank);
-            redTank.draw(canvas, maze.getBricks(), redTank);
+            redTank.draw(canvas, maze.getBricks(), greenTank);
         }
 
         try {
