@@ -12,11 +12,11 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -31,13 +31,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button onOffButton;
-    Button discoverButton;
-    Button sendButton;
-    ListView listView;
-    TextView readMsgTextView;
-    TextView connectionStatusTextView;
-    EditText writeMsgEditText;
+    Button findPlayersButton;
+    ListView playersList;
+    ProgressBar progressBar;
 
     WifiManager wifiManager;
     WifiP2pManager wifiP2pManager;
@@ -172,13 +168,11 @@ public class MainActivity extends AppCompatActivity {
         executeListener();
     }
 
+
     Handler handler = new Handler(msg -> {
         switch (msg.what) {
             case MESSAGE_READ:
                 byte[] readBuffer = (byte[]) msg.obj;
-//                String tempMsg = new String(readBuffer, 0, msg.arg1);
-//                readMsgTextView.setText(tempMsg);
-
                 byte action = readBuffer[0];
                 battlegroundView.handleAction(action);
         }
@@ -186,38 +180,26 @@ public class MainActivity extends AppCompatActivity {
     });
 
     private void executeListener() {
-        onOffButton.setOnClickListener(v -> {
-            if (wifiManager.isWifiEnabled()) {
-                wifiManager.setWifiEnabled(false);
-                onOffButton.setText("Wifi On");
-            } else {
-                wifiManager.setWifiEnabled(true);
-                onOffButton.setText("Wifi off");
-            }
-        });
+        findPlayersButton.setOnClickListener(v -> {
 
-        discoverButton.setOnClickListener(v -> {
+            progressBar.setVisibility(View.VISIBLE);
+
             wifiP2pManager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
                 @Override
                 public void onSuccess() {
                     // Successfully started discovering
-                    connectionStatusTextView.setText("Discovery Started");
+                    Toast.makeText(getApplicationContext(), "Discovery started", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onFailure(int reason) {
                     // Failed to start discovering
-                    connectionStatusTextView.setText("Discovery failed to Start");
+                    Toast.makeText(getApplicationContext(), "Discovery failed to Start", Toast.LENGTH_SHORT).show();
                 }
             });
         });
 
-        sendButton.setOnClickListener(v -> {
-            String msg = writeMsgEditText.getText().toString();
-            sendReceiveThread.write(msg.getBytes());
-        });
-
-        listView.setOnItemClickListener((parent, view, position, id) -> {
+        playersList.setOnItemClickListener((parent, view, position, id) -> {
             final WifiP2pDevice device = deviceArray[position];
             WifiP2pConfig config = new WifiP2pConfig();
             config.deviceAddress = device.deviceAddress;
@@ -273,7 +255,8 @@ public class MainActivity extends AppCompatActivity {
                     = new ArrayAdapter<>(getApplicationContext(),
                     android.R.layout.simple_list_item_1, deviceNameArray);
 
-            listView.setAdapter(arrayAdapter);
+            progressBar.setVisibility(View.INVISIBLE);
+            playersList.setAdapter(arrayAdapter);
 
             if (peers.size() == 0) {
                 Toast.makeText(getApplicationContext(),
@@ -288,7 +271,6 @@ public class MainActivity extends AppCompatActivity {
             final InetAddress groupOwnerAddress = info.groupOwnerAddress;
 
             if (info.groupFormed && info.isGroupOwner) {
-                // TODO: Testing
                 battlegroundView = new BattlegroundView(MainActivity.this);
                 setContentView(battlegroundView);
                 host = Host.SERVER;
@@ -296,7 +278,6 @@ public class MainActivity extends AppCompatActivity {
                 serverThread = new ServerThread();
                 serverThread.start();
             } else if (info.groupFormed) {
-                // TODO: Testing
                 battlegroundView = new BattlegroundView(MainActivity.this);
                 setContentView(battlegroundView);
                 host = Host.CLIENT;
@@ -308,18 +289,12 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void initializeComponents() {
-        onOffButton = findViewById(R.id.onOff);
-        discoverButton = findViewById(R.id.discover);
-        sendButton = findViewById(R.id.sendButton);
-        listView = findViewById(R.id.peerListView);
-        readMsgTextView = findViewById(R.id.readMsg);
-        connectionStatusTextView = findViewById(R.id.connectionStatus);
-        writeMsgEditText = findViewById(R.id.writeMsg);
+        findPlayersButton = findViewById(R.id.find_players_button);
+        playersList = findViewById(R.id.peer_list);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.INVISIBLE);
 
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        if (wifiManager.isWifiEnabled()) {
-            onOffButton.setText("Wifi off");
-        }
 
         wifiP2pManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = wifiP2pManager.initialize(this, getMainLooper(), null);
