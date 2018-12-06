@@ -65,6 +65,8 @@ public class Tank {
     private int destinationTop;
     private Shell shell;
 
+    private int score;
+
 
     public Tank(Context context, Color color, int screenWidth, int screenHeight) {
         this.context = context;
@@ -110,6 +112,8 @@ public class Tank {
     public Direction getDirection() {
         return  this.direction;
     }
+
+    public Color getColor() { return this.color; }
 
     public void handleUp(List<Brick> bricks, Tank otherTank) {
         if (state == State.STATIONARY

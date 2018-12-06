@@ -31,6 +31,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final boolean BYPASS_WIFI_SCREEN = true;
+
     Button findPlayersButton;
     ListView playersList;
     ProgressBar progressBar;
@@ -181,22 +183,27 @@ public class MainActivity extends AppCompatActivity {
 
     private void executeListener() {
         findPlayersButton.setOnClickListener(v -> {
+            if (BYPASS_WIFI_SCREEN) {
+                setContentView(new BattlegroundView(this));
+            } else {
+                progressBar.setVisibility(View.VISIBLE);
 
-            progressBar.setVisibility(View.VISIBLE);
+                wifiP2pManager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+                        // Successfully started discovering
+                        Toast.makeText(getApplicationContext(),
+                                "Discovery started", Toast.LENGTH_SHORT).show();
+                    }
 
-            wifiP2pManager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
-                @Override
-                public void onSuccess() {
-                    // Successfully started discovering
-                    Toast.makeText(getApplicationContext(), "Discovery started", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onFailure(int reason) {
-                    // Failed to start discovering
-                    Toast.makeText(getApplicationContext(), "Discovery failed to Start", Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void onFailure(int reason) {
+                        // Failed to start discovering
+                        Toast.makeText(getApplicationContext(),
+                                "Discovery failed to Start", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         });
 
         playersList.setOnItemClickListener((parent, view, position, id) -> {

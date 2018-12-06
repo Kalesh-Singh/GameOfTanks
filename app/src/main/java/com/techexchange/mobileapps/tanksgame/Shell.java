@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 
 import java.util.ArrayList;
@@ -36,6 +38,8 @@ public class Shell {
     private State state;
     private Brick collidedBrick;
 
+    private int score;
+
     public Shell(Context context, int screenWidth, int screenHeight, int tankWidth, int tankHeight, int tankXSpeed, int tankYSpeed) {
         this.context = context;
         this.bitmaps = getShellBitmaps();
@@ -51,11 +55,14 @@ public class Shell {
         this.rect = null;
         this.state = State.COLLIDED;
         this.collidedBrick = null;
+
+        this.score = 0;
     }
 
     // ------------------------------- Public methods -----------------------------------
 
     public void draw(Canvas canvas, List<Brick> bricks, Tank otherTank) {
+        drawScore(canvas, otherTank);
         if (rect != null) {
             canvas.drawBitmap(bitmaps.get(bitmapIndex), null, rect, null);
             updatePosition(bricks, otherTank);
@@ -85,6 +92,21 @@ public class Shell {
 
 
     // ------------------------------- Private methods -----------------------------------
+
+    private void drawScore(Canvas canvas, Tank otherTank) {
+        String score = "Score: " + String.valueOf(this.score);
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setAntiAlias(true);
+        paint.setTextSize(50);
+        if (otherTank.getColor() == Tank.Color.RED) { // This is the green tank
+            paint.setColor(Color.GREEN);
+            canvas.drawText(score, screenWidth - 220, screenHeight - 16, paint);
+        } else {
+            paint.setColor(Color.RED);
+            canvas.drawText(score, 16,66, paint);
+        }
+    }
 
     private void updatePosition(List<Brick> bricks, Tank otherTank) {
         if (state == State.IN_MOTION) {
@@ -167,7 +189,7 @@ public class Shell {
 
         // Collides with other tank.
         if (otherTank.getRect().contains(rect.centerX(), rect.centerY())) {
-            // TODO: Update player points
+            this.score += 1;
             return true;
         }
 
