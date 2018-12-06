@@ -101,7 +101,7 @@ public class Shell {
         paint.setTextSize(50);
         if (otherTank.getColor() == Tank.Color.RED) { // This is the green tank
             paint.setColor(Color.GREEN);
-            canvas.drawText(score, screenWidth - 220, screenHeight - 16, paint);
+            canvas.drawText(score, screenWidth - 220, screenHeight - 20, paint);
         } else {
             paint.setColor(Color.RED);
             canvas.drawText(score, 16,66, paint);
